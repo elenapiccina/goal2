@@ -1,508 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goals Widget</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alice&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* User Specified Palette */
-            --bg-small: #f2d9db;
-            --text-small: #5A2D34;
-            --border-small: #e3b8bc;
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { background: transparent; margin: 0; padding: 10px; }
+  
+  .container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
 
-            --bg-big: #a6ba4c;
-            --text-big: #2B360B;
-            --border-big: #8b9e38;
+  .card {
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    transition: transform 0.2s ease;
+  }
+  .card:hover { transform: translateY(-3px); }
 
-            --bg-future: #eaa3a2;
-            --text-future: #521D1C;
-            --border-future: #d98281;
+  .small-goals { background-color: #E2F0CB; color: #4A6B34; }
+  .big-goals { background-color: #E8D7F5; color: #5B3A70; }
+  .future-goals { background-color: #FFE5D9; color: #7A4B3A; }
 
-            /* Base Elements */
-            --bg-body: #FAFAFA;
-            --card-bg: #FFFFFF;
-            --text-dark: #2B2326;
-            --text-muted: #786C72;
+  h3 { margin: 0 0 12px 0; font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
 
-            --shadow-soft: 0 12px 32px rgba(0,0,0,0.06);
-        }
+  .goal-item {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(4px);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+  }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  .status {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: transparent;
-            padding: 12px;
-            display: flex;
-            justify-content: center;
-            color: var(--text-dark);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .widget-container {
-            width: 100%;
-            max-width: 520px;
-            background: #FFFFFF;
-            border: 1px solid #EEE6E8;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: var(--shadow-soft);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-title {
-            font-family: 'Alice', Georgia, serif;
-            font-size: 1.35rem;
-            color: var(--text-dark);
-        }
-
-        .btn-focus {
-            background: #2B2326;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 12px;
-            padding: 6px 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-
-        .btn-focus:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        /* ADHD 1-Goal Focus Box */
-        .focus-spotlight {
-            background: #FFF9FA;
-            border: 2px dashed #E25A91;
-            border-radius: 18px;
-            padding: 18px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .focus-spotlight.hidden {
-            display: none;
-        }
-
-        .focus-label {
-            font-size: 0.68rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
-            color: #E25A91;
-        }
-
-        .focus-text {
-            font-family: 'Alice', serif;
-            font-size: 1.1rem;
-            color: var(--text-dark);
-        }
-
-        /* Goal Block Container */
-        .goal-block {
-            border-radius: 20px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            transition: all 0.2s ease;
-        }
-
-        /* Specific Block Palette Overrides */
-        .block-small {
-            background-color: var(--bg-small);
-            color: var(--text-small);
-            border: 1px solid var(--border-small);
-        }
-
-        .block-big {
-            background-color: var(--bg-big);
-            color: var(--text-big);
-            border: 1px solid var(--border-big);
-        }
-
-        .block-future {
-            background-color: var(--bg-future);
-            color: var(--text-future);
-            border: 1px solid var(--border-future);
-        }
-
-        .block-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .block-title {
-            font-family: 'Alice', Georgia, serif;
-            font-size: 1.1rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .block-count {
-            font-size: 0.7rem;
-            font-weight: 700;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        /* Goal Item Rows */
-        .goal-items-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .goal-item {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(4px);
-            border-radius: 12px;
-            padding: 10px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-            transition: all 0.2s ease;
-        }
-
-        .goal-item.done {
-            opacity: 0.6;
-        }
-
-        .goal-item.done .goal-title-text {
-            text-decoration: line-through;
-        }
-
-        .goal-title-text {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            flex: 1;
-            word-break: break-word;
-        }
-
-        .status-btn {
-            border: none;
-            border-radius: 8px;
-            padding: 4px 8px;
-            font-size: 0.68rem;
-            font-weight: 700;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: transform 0.15s ease;
-        }
-
-        .status-btn:hover {
-            transform: scale(1.04);
-        }
-
-        .status-not-started { background: #EAE5E7; color: #5C5256; }
-        .status-in-progress { background: #FFF0B3; color: #825A00; }
-        .status-done { background: #C8E6C9; color: #1B5E20; }
-
-        .btn-del {
-            background: none;
-            border: none;
-            color: #8C7B82;
-            cursor: pointer;
-            font-size: 0.8rem;
-            padding: 2px 4px;
-            border-radius: 4px;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-
-        .btn-del:hover {
-            opacity: 1;
-            color: #C62828;
-        }
-
-        /* Quick Add Field */
-        .add-box {
-            display: flex;
-            gap: 6px;
-        }
-
-        .input-goal {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 7px 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.78rem;
-            color: var(--text-dark);
-            outline: none;
-        }
-
-        .input-goal::placeholder {
-            color: rgba(0, 0, 0, 0.45);
-        }
-
-        .input-goal:focus {
-            background: #FFFFFF;
-            border-color: rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-add {
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(0, 0, 0, 0.12);
-            color: var(--text-dark);
-            border-radius: 10px;
-            padding: 7px 12px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-add:hover {
-            background: #FFFFFF;
-        }
-    </style>
+  .status-not-started { background: #D0E1FD; color: #2B4C7E; }
+  .status-in-progress { background: #FFF1C5; color: #7A6200; }
+  .status-started { background: #FFC6FF; color: #702070; }
+</style>
 </head>
 <body>
 
-<div class="widget-container">
-    <div class="header">
-        <h1 class="header-title">My Goals 🎯</h1>
-        <button class="btn-focus" id="focusToggleBtn" onclick="toggleFocusMode()">👁 1-Goal Focus</button>
+<div class="container">
+  <!-- Small Goals Block -->
+  <div class="card small-goals">
+    <h3>🌱 Small Goals</h3>
+    <div class="goal-item">
+      <span>Organize desk</span>
+      <span class="status status-in-progress">In Progress</span>
     </div>
-
-    <!-- ADHD 1-Goal Focus Spotlight View -->
-    <div class="focus-spotlight hidden" id="focusBox">
-        <div class="focus-label">✨ Priority Focus Spotlight ✨</div>
-        <div class="focus-text" id="focusTaskText">No active goal selected</div>
-        <button class="btn-add" style="margin-top: 6px;" onclick="completeFocusGoal()">Complete & Next 🎉</button>
+    <div class="goal-item">
+      <span>Drink 2L Water</span>
+      <span class="status status-started">Started</span>
     </div>
+  </div>
 
-    <!-- Block Container -->
-    <div id="allBlocksContainer" style="display: flex; flex-direction: column; gap: 14px;">
-        
-        <!-- Small Goals (#f2d9db) -->
-        <div class="goal-block block-small">
-            <div class="block-header">
-                <span class="block-title">⚡️ Small Goals</span>
-                <span class="block-count" id="count-small">0</span>
-            </div>
-            <div class="goal-items-list" id="list-small"></div>
-            <div class="add-box">
-                <input type="text" class="input-goal" id="input-small" placeholder="Add a quick win goal..." onkeydown="handleKey(event, 'small')">
-                <button class="btn-add" onclick="addGoal('small')">+ Add</button>
-            </div>
-        </div>
-
-        <!-- Big Goals (#a6ba4c) -->
-        <div class="goal-block block-big">
-            <div class="block-header">
-                <span class="block-title">🐘 Big Goals</span>
-                <span class="block-count" id="count-big">0</span>
-            </div>
-            <div class="goal-items-list" id="list-big"></div>
-            <div class="add-box">
-                <input type="text" class="input-goal" id="input-big" placeholder="Add a high-impact goal..." onkeydown="handleKey(event, 'big')">
-                <button class="btn-add" onclick="addGoal('big')">+ Add</button>
-            </div>
-        </div>
-
-        <!-- Future Goals (#eaa3a2) -->
-        <div class="goal-block block-future">
-            <div class="block-header">
-                <span class="block-title">🚀 Future Goals</span>
-                <span class="block-count" id="count-future">0</span>
-            </div>
-            <div class="goal-items-list" id="list-future"></div>
-            <div class="add-box">
-                <input type="text" class="input-goal" id="input-future" placeholder="Add a long-term vision..." onkeydown="handleKey(event, 'future')">
-                <button class="btn-add" onclick="addGoal('future')">+ Add</button>
-            </div>
-        </div>
-
+  <!-- Big Goals Block -->
+  <div class="card big-goals">
+    <h3>⚡ Big Goals</h3>
+    <div class="goal-item">
+      <span>Launch Portfolio</span>
+      <span class="status status-in-progress">In Progress</span>
     </div>
+    <div class="goal-item">
+      <span>Read 2 Books</span>
+      <span class="status status-not-started">Not Started</span>
+    </div>
+  </div>
+
+  <!-- Future Goals Block -->
+  <div class="card future-goals">
+    <h3>✨ Future Goals</h3>
+    <div class="goal-item">
+      <span>Trip to Japan</span>
+      <span class="status status-not-started">Not Started</span>
+    </div>
+    <div class="goal-item">
+      <span>Learn Spanish</span>
+      <span class="status status-not-started">Not Started</span>
+    </div>
+  </div>
 </div>
-
-<script>
-    const STORAGE_KEY = 'adhd_custom_color_goals_v2';
-
-    const defaultGoals = [
-        { id: 1, type: 'small', title: 'Organize desk surface', status: 'In Progress' },
-        { id: 2, type: 'small', title: 'Drink a glass of water', status: 'Done' },
-        { id: 3, type: 'big', title: 'Launch digital offer', status: 'In Progress' },
-        { id: 4, type: 'future', title: 'Location independent lifestyle', status: 'Not Started' }
-    ];
-
-    function loadGoals() {
-        try {
-            const data = localStorage.getItem(STORAGE_KEY);
-            return data ? JSON.parse(data) : defaultGoals;
-        } catch (e) {
-            return defaultGoals;
-        }
-    }
-
-    function saveGoals(data) {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        } catch (e) {
-            console.warn("Storage restricted", e);
-        }
-    }
-
-    let goals = loadGoals();
-    let isFocusMode = false;
-
-    function render() {
-        const types = ['small', 'big', 'future'];
-
-        types.forEach(type => {
-            const container = document.getElementById(`list-${type}`);
-            const countEl = document.getElementById(`count-${type}`);
-            const filtered = goals.filter(g => g.type === type);
-
-            container.innerHTML = '';
-            countEl.innerText = `${filtered.filter(g => g.status !== 'Done').length} left`;
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div style="font-size: 0.72rem; opacity: 0.65; font-style: italic;">No goals in this block yet.</div>`;
-                return;
-            }
-
-            filtered.forEach(goal => {
-                const item = document.createElement('div');
-                item.className = `goal-item ${goal.status === 'Done' ? 'done' : ''}`;
-
-                let statusClass = 'status-not-started';
-                if (goal.status === 'In Progress') statusClass = 'status-in-progress';
-                if (goal.status === 'Done') statusClass = 'status-done';
-
-                item.innerHTML = `
-                    <span class="goal-title-text">${escapeHtml(goal.title)}</span>
-                    <button class="status-btn ${statusClass}" onclick="cycleStatus(${goal.id})">${goal.status}</button>
-                    <button class="btn-del" onclick="deleteGoal(${goal.id})">✕</button>
-                `;
-                container.appendChild(item);
-            });
-        });
-
-        if (isFocusMode) updateFocusView();
-    }
-
-    function cycleStatus(id) {
-        const goal = goals.find(g => g.id === id);
-        if (!goal) return;
-
-        const cycle = ['Not Started', 'In Progress', 'Done'];
-        const nextIdx = (cycle.indexOf(goal.status) + 1) % cycle.length;
-        goal.status = cycle[nextIdx];
-
-        saveGoals(goals);
-        render();
-    }
-
-    function addGoal(type) {
-        const input = document.getElementById(`input-${type}`);
-        const text = input.value.trim();
-        if (!text) return;
-
-        goals.push({
-            id: Date.now(),
-            type: type,
-            title: text,
-            status: 'Not Started'
-        });
-
-        input.value = '';
-        saveGoals(goals);
-        render();
-    }
-
-    function handleKey(e, type) {
-        if (e.key === 'Enter') addGoal(type);
-    }
-
-    function deleteGoal(id) {
-        goals = goals.filter(g => g.id !== id);
-        saveGoals(goals);
-        render();
-    }
-
-    function toggleFocusMode() {
-        isFocusMode = !isFocusMode;
-        const focusBox = document.getElementById('focusBox');
-        const blocksContainer = document.getElementById('allBlocksContainer');
-        const btn = document.getElementById('focusToggleBtn');
-
-        if (isFocusMode) {
-            focusBox.classList.remove('hidden');
-            blocksContainer.style.display = 'none';
-            btn.innerText = '📋 Show All Blocks';
-            updateFocusView();
-        } else {
-            focusBox.classList.add('hidden');
-            blocksContainer.style.display = 'flex';
-            btn.innerText = '👁 1-Goal Focus';
-        }
-    }
-
-    function updateFocusView() {
-        const focusText = document.getElementById('focusTaskText');
-        const activeGoal = goals.find(g => g.status === 'In Progress') || goals.find(g => g.status === 'Not Started');
-
-        if (!activeGoal) {
-            focusText.innerText = "All goals completed! You're crushing it 🎉";
-            return;
-        }
-
-        focusText.innerText = `[${activeGoal.type.toUpperCase()}] ${activeGoal.title}`;
-    }
-
-    function completeFocusGoal() {
-        const activeGoal = goals.find(g => g.status === 'In Progress') || goals.find(g => g.status === 'Not Started');
-        if (activeGoal) {
-            activeGoal.status = 'Done';
-            saveGoals(goals);
-            render();
-        }
-    }
-
-    function escapeHtml(str) {
-        const d = document.createElement('div');
-        d.innerText = str;
-        return d.innerHTML;
-    }
-
-    render();
-</script>
 
 </body>
 </html>
