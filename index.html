@@ -1,99 +1,700 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<style>
-  * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-  body { background: transparent; margin: 0; padding: 10px; }
-  
-  .container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notion ADHD Goals Widget</title>
 
-  .card {
-    border-radius: 16px;
-    padding: 18px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    transition: transform 0.2s ease;
-  }
-  .card:hover { transform: translateY(-3px); }
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  .small-goals { background-color: #E2F0CB; color: #4A6B34; }
-  .big-goals { background-color: #E8D7F5; color: #5B3A70; }
-  .future-goals { background-color: #FFE5D9; color: #7A4B3A; }
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  h3 { margin: 0 0 12px 0; font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
+  <!-- Canvas Confetti for Visual Dopamine Micro-rewards -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  .goal-item {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(4px);
-    border-radius: 10px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-  }
+  <!-- Google Font: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  .status {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+  <style>
+    * {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      user-select: none;
+    }
 
-  .status-not-started { background: #D0E1FD; color: #2B4C7E; }
-  .status-in-progress { background: #FFF1C5; color: #7A6200; }
-  .status-started { background: #FFC6FF; color: #702070; }
-</style>
+    body {
+      background: linear-gradient(135deg, #fbf7f9 0%, #f0f4f8 50%, #eae8f5 100%);
+      min-height: 100vh;
+      color: #334155;
+      padding: 16px;
+      margin: 0;
+      overflow-x: auto;
+    }
+
+    /* Core Glassmorphism Base Panel */
+    .glass-panel {
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 24px;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Glowing Reflective Borders */
+    .glass-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      padding: 1.5px;
+      background: linear-gradient(
+        135deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(255, 255, 255, 0.35) 40%, 
+        rgba(255, 255, 255, 0.15) 60%, 
+        rgba(255, 255, 255, 0.85) 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    /* Glossy Edge Reflection Shine Animation */
+    .shine-effect {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .shine-effect::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.45), 
+        transparent
+      );
+      transform: skewX(-20deg);
+      pointer-events: none;
+      animation: shineLoop 8s infinite ease-in-out;
+    }
+
+    @keyframes shineLoop {
+      0% { left: -150%; }
+      20% { left: 150%; }
+      100% { left: 150%; }
+    }
+
+    /* Column 1: Small Goals - Soft Mint (#D8F3DC) */
+    .glass-small {
+      background: rgba(216, 243, 220, 0.55);
+      box-shadow: 
+        0 10px 32px -5px rgba(183, 228, 199, 0.45),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+    }
+    .glass-small:hover {
+      box-shadow: 
+        0 14px 38px -3px rgba(183, 228, 199, 0.65),
+        inset 0 1px 3px rgba(255, 255, 255, 1);
+    }
+
+    /* Column 2: Big Goals - Soft Lavender (#E2D4F9) */
+    .glass-big {
+      background: rgba(226, 212, 249, 0.55);
+      box-shadow: 
+        0 10px 32px -5px rgba(216, 180, 254, 0.45),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+    }
+    .glass-big:hover {
+      box-shadow: 
+        0 14px 38px -3px rgba(216, 180, 254, 0.65),
+        inset 0 1px 3px rgba(255, 255, 255, 1);
+    }
+
+    /* Column 3: Future Goals - Warm Peach (#FFD6A5) */
+    .glass-future {
+      background: rgba(255, 214, 165, 0.55);
+      box-shadow: 
+        0 10px 32px -5px rgba(254, 205, 165, 0.45),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+    }
+    .glass-future:hover {
+      box-shadow: 
+        0 14px 38px -3px rgba(254, 205, 165, 0.65),
+        inset 0 1px 3px rgba(255, 255, 255, 1);
+    }
+
+    /* Goal Cards Inside Columns */
+    .goal-card {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .goal-card:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    /* Status Badge Styles */
+    .badge-not-started {
+      background-color: #E0F2FE;
+      color: #0369A1;
+      border: 1px solid #BAE6FD;
+    }
+    .badge-in-progress {
+      background-color: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FDE68A;
+    }
+    .badge-started {
+      background-color: #FCE7F3;
+      color: #9D174D;
+      border: 1px solid #FBCFE8;
+    }
+    .badge-completed {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #A7F3D0;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.25);
+    }
+  </style>
 </head>
-<body>
+<body class="flex flex-col gap-4 max-w-7xl mx-auto">
 
-<div class="container">
-  <!-- Small Goals Block -->
-  <div class="card small-goals">
-    <h3>🌱 Small Goals</h3>
-    <div class="goal-item">
-      <span>Organize desk</span>
-      <span class="status status-in-progress">In Progress</span>
+  <!-- Header Dashboard Bar -->
+  <header class="glass-panel p-4 flex flex-wrap items-center justify-between gap-3 bg-white/40 border border-white/70 shadow-sm">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-white/80 flex items-center justify-center text-xl shadow-inner border border-white text-purple-500">
+        🎯
+      </div>
+      <div>
+        <h1 class="text-lg font-extrabold text-slate-800 tracking-tight leading-none">Goals Dashboard</h1>
+        <p class="text-xs text-slate-500 mt-1 font-semibold flex items-center gap-1.5">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          ADHD Low-Friction Focus Tracker
+        </p>
+      </div>
     </div>
-    <div class="goal-item">
-      <span>Drink 2L Water</span>
-      <span class="status status-started">Started</span>
+
+    <div class="flex items-center gap-2.5">
+      <!-- Total Progress Summary Pill -->
+      <div class="px-3 py-1.5 rounded-xl bg-white/70 border border-white/90 text-xs font-bold text-slate-700 flex items-center gap-2 shadow-sm">
+        <i class="fa-solid fa-trophy text-amber-400"></i>
+        <span id="overall-goal-stats">0 Goals Total</span>
+      </div>
+
+      <!-- Add Goal Button -->
+      <button onclick="openAddGoalModal('Small Goals')" 
+        class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition flex items-center gap-2 shadow-md active:scale-95">
+        <i class="fa-solid fa-plus"></i>
+        <span>Add Goal</span>
+      </button>
+
+      <!-- Reset Demo Data -->
+      <button onclick="resetDefaultData()" title="Reset default goals data" 
+        class="w-8 h-8 rounded-xl bg-white/70 hover:bg-rose-50 border border-white/80 text-xs text-slate-500 hover:text-rose-500 transition flex items-center justify-center shadow-sm">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Horizontal Side-by-Side 3-Column Layout -->
+  <main class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full items-start">
+
+    <!-- COLUMN 1: Small Goals (#D8F3DC) -->
+    <section class="glass-panel glass-small p-5 shine-effect flex flex-col gap-4">
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🌱</span>
+            <h2 class="font-extrabold text-slate-800 text-base">Small Goals</h2>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span id="badge-small" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/80 text-emerald-900 border border-white/80 shadow-sm">0</span>
+            <button onclick="openAddGoalModal('Small Goals')" title="Add Small Goal" class="w-6 h-6 rounded-lg bg-white/70 hover:bg-white text-emerald-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <p class="text-[11px] font-bold text-emerald-950/70">Quick Wins • 1 to 7 Days</p>
+      </div>
+
+      <!-- Goal List Container -->
+      <div id="container-small" class="flex flex-col gap-3.5 min-h-[180px]"></div>
+    </section>
+
+    <!-- COLUMN 2: Big Goals (#E2D4F9) -->
+    <section class="glass-panel glass-big p-5 shine-effect flex flex-col gap-4">
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">⚡</span>
+            <h2 class="font-extrabold text-slate-800 text-base">Big Goals</h2>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span id="badge-big" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/80 text-purple-900 border border-white/80 shadow-sm">0</span>
+            <button onclick="openAddGoalModal('Big Goals')" title="Add Big Goal" class="w-6 h-6 rounded-lg bg-white/70 hover:bg-white text-purple-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <p class="text-[11px] font-bold text-purple-950/70">Core Focus • 1 to 3 Months</p>
+      </div>
+
+      <!-- Goal List Container -->
+      <div id="container-big" class="flex flex-col gap-3.5 min-h-[180px]"></div>
+    </section>
+
+    <!-- COLUMN 3: Future Goals (#FFD6A5) -->
+    <section class="glass-panel glass-future p-5 shine-effect flex flex-col gap-4">
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">✨</span>
+            <h2 class="font-extrabold text-slate-800 text-base">Future Goals</h2>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span id="badge-future" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/80 text-amber-900 border border-white/80 shadow-sm">0</span>
+            <button onclick="openAddGoalModal('Future Goals')" title="Add Future Goal" class="w-6 h-6 rounded-lg bg-white/70 hover:bg-white text-amber-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+        <p class="text-[11px] font-bold text-amber-950/70">Someday & Vision Board</p>
+      </div>
+
+      <!-- Goal List Container -->
+      <div id="container-future" class="flex flex-col gap-3.5 min-h-[180px]"></div>
+    </section>
+
+  </main>
+
+  <!-- Modal Overlay for Adding / Editing Goals -->
+  <div id="goal-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="glass-panel bg-white/95 p-6 rounded-3xl w-full max-w-md shadow-2xl border border-white flex flex-col gap-4 relative animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-slate-200/60 pb-3">
+        <h3 id="modal-title" class="font-extrabold text-slate-800 text-base flex items-center gap-2">
+          <i class="fa-solid fa-bullseye text-purple-500"></i> Add New Goal
+        </h3>
+        <button onclick="closeGoalModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="goal-form" onsubmit="handleGoalFormSubmit(event)" class="flex flex-col gap-3.5">
+        <input type="hidden" id="form-goal-id" value="">
+
+        <!-- Title Input -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Goal Title *</label>
+          <input type="text" id="form-title" required placeholder="e.g. Organize desk setup" 
+            class="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:border-purple-400 focus:bg-white text-slate-800 outline-none transition font-semibold" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Category Select -->
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Category / Timeframe</label>
+            <select id="form-category" 
+              class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:border-purple-400 focus:bg-white text-slate-800 outline-none transition font-semibold">
+              <option value="Small Goals">🌱 Small Goals (1-7 days)</option>
+              <option value="Big Goals">⚡ Big Goals (1-3 mos)</option>
+              <option value="Future Goals">✨ Future Goals (Someday)</option>
+            </select>
+          </div>
+
+          <!-- Status Select -->
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Status</label>
+            <select id="form-status" 
+              class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:border-purple-400 focus:bg-white text-slate-800 outline-none transition font-semibold">
+              <option value="Not Started">🔵 Not Started</option>
+              <option value="In Progress">🟡 In Progress</option>
+              <option value="Started">🌸 Started</option>
+              <option value="Completed">❇️ Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Target Date -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Target Date / Note (Optional)</label>
+          <input type="text" id="form-target-date" placeholder="e.g. By Friday or Next Month" 
+            class="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:border-purple-400 focus:bg-white text-slate-800 outline-none transition font-semibold" />
+        </div>
+
+        <!-- Micro-steps / Sub-notes -->
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Micro Sub-steps (One per line)</label>
+          <textarea id="form-notes" rows="3" placeholder="e.g. Clear off monitor&#10;Sort cables&#10;Wipe surface"
+            class="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:border-purple-400 focus:bg-white text-slate-800 outline-none transition font-semibold resize-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 mt-2">
+          <button type="button" onclick="closeGoalModal()" 
+            class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition">
+            Cancel
+          </button>
+          <button type="submit" 
+            class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold transition shadow-sm">
+            Save Goal
+          </button>
+        </div>
+      </form>
+
     </div>
   </div>
 
-  <!-- Big Goals Block -->
-  <div class="card big-goals">
-    <h3>⚡ Big Goals</h3>
-    <div class="goal-item">
-      <span>Launch Portfolio</span>
-      <span class="status status-in-progress">In Progress</span>
-    </div>
-    <div class="goal-item">
-      <span>Read 2 Books</span>
-      <span class="status status-not-started">Not Started</span>
-    </div>
-  </div>
+  <script>
+    // Default Initial Seed Data
+    const DEFAULT_GOALS = [
+      {
+        id: 'g1',
+        title: 'Organize Workspace',
+        category: 'Small Goals',
+        status: 'In Progress',
+        targetDate: 'By Tomorrow',
+        notes: ['Clear off desk surface', 'Sort stray papers', 'Wipe down keyboard']
+      },
+      {
+        id: 'g2',
+        title: 'Drink 2L Water Daily',
+        category: 'Small Goals',
+        status: 'Started',
+        targetDate: 'Daily Habit',
+        notes: ['Fill water bottle in morning', 'Set gentle reminder phone timers']
+      },
+      {
+        id: 'g3',
+        title: 'Launch Personal Portfolio',
+        category: 'Big Goals',
+        status: 'In Progress',
+        targetDate: 'End of Month',
+        notes: ['Design homepage layout', 'Write project write-ups', 'Publish live link']
+      },
+      {
+        id: 'g4',
+        title: 'Read 3 Focus Books',
+        category: 'Big Goals',
+        status: 'Not Started',
+        targetDate: 'Q3 Goal',
+        notes: ['Atomic Habits', 'Stolen Focus', 'Hyperfocus']
+      },
+      {
+        id: 'g5',
+        title: 'Trip to Japan',
+        category: 'Future Goals',
+        status: 'Not Started',
+        targetDate: 'Someday Vision',
+        notes: ['Save travel budget', 'Research Kyoto itineraries', 'Learn basic travel phrases']
+      }
+    ];
 
-  <!-- Future Goals Block -->
-  <div class="card future-goals">
-    <h3>✨ Future Goals</h3>
-    <div class="goal-item">
-      <span>Trip to Japan</span>
-      <span class="status status-not-started">Not Started</span>
-    </div>
-    <div class="goal-item">
-      <span>Learn Spanish</span>
-      <span class="status status-not-started">Not Started</span>
-    </div>
-  </div>
-</div>
+    let goalsData = [];
 
+    // Load Data from LocalStorage
+    function loadData() {
+      const saved = localStorage.getItem('notion_goals_widget_v1');
+      if (saved) {
+        try {
+          goalsData = JSON.parse(saved);
+        } catch (e) {
+          goalsData = JSON.parse(JSON.stringify(DEFAULT_GOALS));
+        }
+      } else {
+        goalsData = JSON.parse(JSON.stringify(DEFAULT_GOALS));
+      }
+    }
+
+    // Save Data to LocalStorage & Render
+    function saveData() {
+      localStorage.setItem('notion_goals_widget_v1', JSON.stringify(goalsData));
+      renderAll();
+    }
+
+    // Reset Default Data
+    function resetDefaultData() {
+      goalsData = JSON.parse(JSON.stringify(DEFAULT_GOALS));
+      saveData();
+    }
+
+    // Trigger Dopamine Micro-reward Confetti Blast
+    function triggerDopamineConfetti(e) {
+      let x = 0.5;
+      let y = 0.5;
+
+      if (e && e.clientX) {
+        x = e.clientX / window.innerWidth;
+        y = e.clientY / window.innerHeight;
+      }
+
+      confetti({
+        particleCount: 65,
+        spread: 70,
+        origin: { x: x, y: y },
+        colors: ['#D8F3DC', '#E2D4F9', '#FFD6A5', '#FCE7F3', '#FEF3C7', '#D1FAE5'],
+        disableForReducedMotion: true
+      });
+    }
+
+    // Change Goal Status
+    function updateGoalStatus(goalId, newStatus, event) {
+      if (event) event.stopPropagation();
+      const goal = goalsData.find(g => g.id === goalId);
+      if (!goal) return;
+
+      const oldStatus = goal.status;
+      goal.status = newStatus;
+
+      if ((newStatus === 'Started' || newStatus === 'Completed') && oldStatus !== newStatus) {
+        triggerDopamineConfetti(event);
+      }
+
+      saveData();
+    }
+
+    // Change Goal Category (Move Column)
+    function moveGoalCategory(goalId, newCategory, event) {
+      if (event) event.stopPropagation();
+      const goal = goalsData.find(g => g.id === goalId);
+      if (!goal) return;
+
+      goal.category = newCategory;
+      saveData();
+    }
+
+    // Delete Goal
+    function deleteGoal(goalId, event) {
+      if (event) event.stopPropagation();
+      goalsData = goalsData.filter(g => g.id !== goalId);
+      saveData();
+    }
+
+    // Open Modal for Adding Goal
+    function openAddGoalModal(defaultCategory = 'Small Goals') {
+      document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-bullseye text-purple-500"></i> Add New Goal`;
+      document.getElementById('form-goal-id').value = '';
+      document.getElementById('form-title').value = '';
+      document.getElementById('form-category').value = defaultCategory;
+      document.getElementById('form-status').value = 'Not Started';
+      document.getElementById('form-target-date').value = '';
+      document.getElementById('form-notes').value = '';
+
+      document.getElementById('goal-modal').classList.remove('hidden');
+    }
+
+    // Open Modal for Editing Goal
+    function openEditGoalModal(goalId) {
+      const goal = goalsData.find(g => g.id === goalId);
+      if (!goal) return;
+
+      document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-purple-500"></i> Edit Goal`;
+      document.getElementById('form-goal-id').value = goal.id;
+      document.getElementById('form-title').value = goal.title;
+      document.getElementById('form-category').value = goal.category;
+      document.getElementById('form-status').value = goal.status;
+      document.getElementById('form-target-date').value = goal.targetDate || '';
+      document.getElementById('form-notes').value = (goal.notes || []).join('\n');
+
+      document.getElementById('goal-modal').classList.remove('hidden');
+    }
+
+    function closeGoalModal() {
+      document.getElementById('goal-modal').classList.add('hidden');
+    }
+
+    // Handle Form Submission
+    function handleGoalFormSubmit(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('form-goal-id').value;
+      const title = document.getElementById('form-title').value.trim();
+      const category = document.getElementById('form-category').value;
+      const status = document.getElementById('form-status').value;
+      const targetDate = document.getElementById('form-target-date').value.trim();
+      const notesRaw = document.getElementById('form-notes').value;
+      const notes = notesRaw.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+
+      if (id) {
+        // Edit Existing
+        const goal = goalsData.find(g => g.id === id);
+        if (goal) {
+          goal.title = title;
+          goal.category = category;
+          goal.status = status;
+          goal.targetDate = targetDate;
+          goal.notes = notes;
+        }
+      } else {
+        // Add New Goal
+        const newGoal = {
+          id: 'g_' + Date.now(),
+          title,
+          category,
+          status,
+          targetDate,
+          notes
+        };
+        goalsData.push(newGoal);
+        if (status === 'Started' || status === 'Completed') {
+          triggerDopamineConfetti(e);
+        }
+      }
+
+      closeGoalModal();
+      saveData();
+    }
+
+    // Render Single Goal Column
+    function renderColumn(category, containerId, badgeId) {
+      const container = document.getElementById(containerId);
+      const list = goalsData.filter(g => g.category === category);
+
+      // Update Column Count Badge
+      document.getElementById(badgeId).innerText = list.length;
+
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-10 text-center text-slate-400/80 border border-dashed border-slate-300/60 rounded-2xl bg-white/30">
+            <i class="fa-solid fa-seedling text-2xl mb-1.5 opacity-40"></i>
+            <span class="text-xs font-semibold">No goals here yet</span>
+            <button onclick="openAddGoalModal('${category}')" class="mt-2 text-[11px] text-purple-700 font-extrabold underline hover:text-purple-900">Add One</button>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(goal => {
+        const card = document.createElement('div');
+        card.className = 'goal-card p-3.5 rounded-2xl flex flex-col gap-2.5 group relative';
+
+        // Get Badge Style Class
+        let badgeClass = 'badge-not-started';
+        let badgeIcon = 'fa-circle-dot';
+        if (goal.status === 'In Progress') {
+          badgeClass = 'badge-in-progress';
+          badgeIcon = 'fa-spinner';
+        } else if (goal.status === 'Started') {
+          badgeClass = 'badge-started';
+          badgeIcon = 'fa-heart';
+        } else if (goal.status === 'Completed') {
+          badgeClass = 'badge-completed';
+          badgeIcon = 'fa-circle-check';
+        }
+
+        // Render Micro-notes sub-items
+        let subNotesHtml = '';
+        if (goal.notes && goal.notes.length > 0) {
+          const notesList = goal.notes.map(note => `
+            <li class="flex items-center gap-1.5 text-[10px] text-slate-600 font-medium">
+              <span class="w-1 h-1 rounded-full bg-slate-400"></span>
+              <span class="truncate">${escapeHtml(note)}</span>
+            </li>
+          `).join('');
+          subNotesHtml = `<ul class="mt-1 flex flex-col gap-0.5 bg-slate-50/70 p-2 rounded-xl border border-slate-200/50">${notesList}</ul>`;
+        }
+
+        card.innerHTML = `
+          <!-- Header: Title & Actions -->
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0 cursor-pointer flex-1" onclick="openEditGoalModal('${goal.id}')">
+              <h3 class="text-xs font-extrabold text-slate-800 leading-snug hover:text-purple-600 transition ${goal.status === 'Completed' ? 'line-through text-slate-400' : ''}">
+                ${escapeHtml(goal.title)}
+              </h3>
+              ${goal.targetDate ? `<p class="text-[10px] font-bold text-slate-400 mt-0.5 flex items-center gap-1"><i class="fa-regular fa-clock text-[9px]"></i> ${escapeHtml(goal.targetDate)}</p>` : ''}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+              <button onclick="openEditGoalModal('${goal.id}')" title="Edit goal" class="w-5 h-5 rounded hover:bg-slate-200/60 text-slate-500 text-[10px] flex items-center justify-center">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button onclick="deleteGoal('${goal.id}', event)" title="Delete goal" class="w-5 h-5 rounded hover:bg-rose-100 text-rose-500 text-[10px] flex items-center justify-center">
+                <i class="fa-regular fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Sub-notes -->
+          ${subNotesHtml}
+
+          <!-- Footer: Quick Status Pill & Quick Move Dropdown -->
+          <div class="flex items-center justify-between gap-1 pt-1 border-t border-slate-100">
+            <!-- Quick Status Selector -->
+            <select onchange="updateGoalStatus('${goal.id}', this.value, event)" 
+              class="text-[10px] font-extrabold px-2 py-0.5 rounded-lg cursor-pointer outline-none transition ${badgeClass}">
+              <option value="Not Started" ${goal.status === 'Not Started' ? 'selected' : ''}>🔵 Not Started</option>
+              <option value="In Progress" ${goal.status === 'In Progress' ? 'selected' : ''}>🟡 In Progress</option>
+              <option value="Started" ${goal.status === 'Started' ? 'selected' : ''}>🌸 Started</option>
+              <option value="Completed" ${goal.status === 'Completed' ? 'selected' : ''}>❇️ Completed</option>
+            </select>
+
+            <!-- Quick Column Move Dropdown -->
+            <select onchange="moveGoalCategory('${goal.id}', this.value, event)" title="Move goal to another category" 
+              class="text-[9px] font-bold text-slate-400 bg-white/60 hover:bg-white border border-slate-200/60 rounded-md px-1.5 py-0.5 outline-none transition">
+              <option value="Small Goals" ${goal.category === 'Small Goals' ? 'selected' : ''}>🌱 Small</option>
+              <option value="Big Goals" ${goal.category === 'Big Goals' ? 'selected' : ''}>⚡ Big</option>
+              <option value="Future Goals" ${goal.category === 'Future Goals' ? 'selected' : ''}>✨ Future</option>
+            </select>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Render All Columns & Dashboard Summary Stats
+    function renderAll() {
+      renderColumn('Small Goals', 'container-small', 'badge-small');
+      renderColumn('Big Goals', 'container-big', 'badge-big');
+      renderColumn('Future Goals', 'container-future', 'badge-future');
+
+      // Overall Summary
+      const totalGoals = goalsData.length;
+      const completedGoals = goalsData.filter(g => g.status === 'Completed').length;
+      document.getElementById('overall-goal-stats').innerText = `${completedGoals}/${totalGoals} Goals Done`;
+    }
+
+    // Utility: HTML Escaping
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    // Window Init
+    window.onload = function() {
+      loadData();
+      renderAll();
+    };
+  </script>
 </body>
 </html>
