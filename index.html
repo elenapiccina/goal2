@@ -26,7 +26,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #fbf7f9 0%, #f0f4f8 50%, #eae8f5 100%);
+      background: linear-gradient(135deg, #f7f9fc 0%, #f0f3f8 40%, #e8edf5 100%);
       min-height: 100vh;
       color: #334155;
       padding: 16px;
@@ -95,63 +95,93 @@
 
     /* Column 1: Small Goals - Soft Mint (#D8F3DC) */
     .glass-small {
-      background: rgba(216, 243, 220, 0.55);
+      background: rgba(216, 243, 220, 0.6);
       box-shadow: 
-        0 10px 32px -5px rgba(183, 228, 199, 0.45),
+        0 10px 32px -5px rgba(183, 228, 199, 0.5),
         inset 0 1px 2px rgba(255, 255, 255, 0.9);
     }
     .glass-small:hover {
       box-shadow: 
-        0 14px 38px -3px rgba(183, 228, 199, 0.65),
+        0 14px 38px -3px rgba(183, 228, 199, 0.7),
         inset 0 1px 3px rgba(255, 255, 255, 1);
     }
 
-    /* Column 2: Big Goals - Soft Lavender (#E2D4F9) */
+    /* Column 2: Big Goals - Soft Aesthetic Pink (#FAD1D9) */
     .glass-big {
-      background: rgba(226, 212, 249, 0.55);
+      background: rgba(250, 209, 217, 0.62);
       box-shadow: 
-        0 10px 32px -5px rgba(216, 180, 254, 0.45),
+        0 10px 32px -5px rgba(244, 170, 185, 0.5),
         inset 0 1px 2px rgba(255, 255, 255, 0.9);
     }
     .glass-big:hover {
       box-shadow: 
-        0 14px 38px -3px rgba(216, 180, 254, 0.65),
+        0 14px 38px -3px rgba(244, 170, 185, 0.7),
         inset 0 1px 3px rgba(255, 255, 255, 1);
     }
 
-    /* Column 3: Future Goals - Warm Peach (#FFD6A5) */
+    /* Column 3: Future Goals - Slate Blue-Grey (#7D99A4) */
     .glass-future {
-      background: rgba(255, 214, 165, 0.55);
+      background: rgba(125, 153, 164, 0.45);
       box-shadow: 
-        0 10px 32px -5px rgba(254, 205, 165, 0.45),
-        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+        0 10px 32px -5px rgba(125, 153, 164, 0.45),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);
     }
     .glass-future:hover {
       box-shadow: 
-        0 14px 38px -3px rgba(254, 205, 165, 0.65),
-        inset 0 1px 3px rgba(255, 255, 255, 1);
+        0 14px 38px -3px rgba(125, 153, 164, 0.65),
+        inset 0 1px 3px rgba(255, 255, 255, 0.95);
     }
 
     /* Goal Cards Inside Columns */
     .goal-card {
-      background: rgba(255, 255, 255, 0.78);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: grab;
+    }
+    .goal-card:active {
+      cursor: grabbing;
     }
     .goal-card:hover {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.96);
       transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+    }
+    .goal-card.dragging {
+      opacity: 0.4;
+      transform: scale(0.97);
+    }
+
+    /* Drag over column container visual drop target indicator */
+    .drag-over-container {
+      outline: 2px dashed #6366f1 !important;
+      outline-offset: -4px;
+      background: rgba(255, 255, 255, 0.85) !important;
     }
 
     /* Status Badge Styles */
-    .badge-not-started {
-      background-color: #E0F2FE;
-      color: #0369A1;
-      border: 1px solid #BAE6FD;
+    .badge-now {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      color: #FFFFFF;
+      border: 1px solid #FCA5A5;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
+      animation: pulseGlow 2s infinite ease-in-out;
     }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+      50% { box-shadow: 0 0 14px rgba(239, 68, 68, 0.75); }
+    }
+
+    /* Graphite Grey Aesthetic for 🪩 Not Started */
+    .badge-not-started {
+      background-color: #334155;
+      color: #F8FAFC;
+      border: 1px solid #475569;
+      box-shadow: 0 2px 6px rgba(51, 65, 85, 0.25);
+    }
+
     .badge-in-progress {
       background-color: #FEF3C7;
       color: #92400E;
@@ -188,23 +218,29 @@
 <body class="flex flex-col gap-4 max-w-7xl mx-auto">
 
   <!-- Header Dashboard Bar -->
-  <header class="glass-panel p-4 flex flex-wrap items-center justify-between gap-3 bg-white/40 border border-white/70 shadow-sm">
+  <header class="glass-panel p-4 flex flex-wrap items-center justify-between gap-3 bg-white/50 border border-white/80 shadow-sm">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-white/80 flex items-center justify-center text-xl shadow-inner border border-white text-purple-500">
+      <div class="w-10 h-10 rounded-2xl bg-white/90 flex items-center justify-center text-xl shadow-inner border border-white text-purple-600">
         🎯
       </div>
       <div>
         <h1 class="text-lg font-extrabold text-slate-800 tracking-tight leading-none">Goals Dashboard</h1>
         <p class="text-xs text-slate-500 mt-1 font-semibold flex items-center gap-1.5">
-          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
           ADHD Low-Friction Focus Tracker
         </p>
       </div>
     </div>
 
-    <div class="flex items-center gap-2.5">
+    <div class="flex items-center gap-2.5 flex-wrap">
+      <!-- NOW Hyperfocus Count Pill -->
+      <div title="Goals currently marked as NOW" class="px-3 py-1.5 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-600 flex items-center gap-1.5 shadow-xs">
+        <span>🔥</span>
+        <span id="now-goal-stats">0 NOW</span>
+      </div>
+
       <!-- Total Progress Summary Pill -->
-      <div class="px-3 py-1.5 rounded-xl bg-white/70 border border-white/90 text-xs font-bold text-slate-700 flex items-center gap-2 shadow-sm">
+      <div class="px-3 py-1.5 rounded-xl bg-white/80 border border-white/90 text-xs font-bold text-slate-700 flex items-center gap-2 shadow-xs">
         <i class="fa-solid fa-trophy text-amber-400"></i>
         <span id="overall-goal-stats">0 Goals Total</span>
       </div>
@@ -218,7 +254,7 @@
 
       <!-- Reset Demo Data -->
       <button onclick="resetDefaultData()" title="Reset default goals data" 
-        class="w-8 h-8 rounded-xl bg-white/70 hover:bg-rose-50 border border-white/80 text-xs text-slate-500 hover:text-rose-500 transition flex items-center justify-center shadow-sm">
+        class="w-8 h-8 rounded-xl bg-white/80 hover:bg-rose-50 border border-white/90 text-xs text-slate-500 hover:text-rose-500 transition flex items-center justify-center shadow-xs">
         <i class="fa-solid fa-rotate-right"></i>
       </button>
     </div>
@@ -228,7 +264,12 @@
   <main class="grid grid-cols-1 md:grid-cols-3 gap-5 w-full items-start">
 
     <!-- COLUMN 1: Small Goals (#D8F3DC) -->
-    <section class="glass-panel glass-small p-5 shine-effect flex flex-col gap-4">
+    <section class="glass-panel glass-small p-5 shine-effect flex flex-col gap-4 min-h-[400px] transition-all"
+      ondragover="handleDragOver(event)"
+      ondragenter="handleDragEnter(event, 'Small Goals')"
+      ondragleave="handleDragLeave(event, 'Small Goals')"
+      ondrop="handleDrop(event, 'Small Goals')"
+      id="col-small">
       <div class="flex flex-col gap-1.5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -236,8 +277,8 @@
             <h2 class="font-extrabold text-slate-800 text-base">Small Goals</h2>
           </div>
           <div class="flex items-center gap-1.5">
-            <span id="badge-small" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/80 text-emerald-900 border border-white/80 shadow-sm">0</span>
-            <button onclick="openAddGoalModal('Small Goals')" title="Add Small Goal" class="w-6 h-6 rounded-lg bg-white/70 hover:bg-white text-emerald-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
+            <span id="badge-small" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/90 text-emerald-900 border border-white/80 shadow-xs">0</span>
+            <button onclick="openAddGoalModal('Small Goals')" title="Add Small Goal" class="w-6 h-6 rounded-lg bg-white/80 hover:bg-white text-emerald-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
@@ -246,11 +287,16 @@
       </div>
 
       <!-- Goal List Container -->
-      <div id="container-small" class="flex flex-col gap-3.5 min-h-[180px]"></div>
+      <div id="container-small" class="flex flex-col gap-3.5 flex-1"></div>
     </section>
 
-    <!-- COLUMN 2: Big Goals (#E2D4F9) -->
-    <section class="glass-panel glass-big p-5 shine-effect flex flex-col gap-4">
+    <!-- COLUMN 2: Big Goals (#FAD1D9) -->
+    <section class="glass-panel glass-big p-5 shine-effect flex flex-col gap-4 min-h-[400px] transition-all"
+      ondragover="handleDragOver(event)"
+      ondragenter="handleDragEnter(event, 'Big Goals')"
+      ondragleave="handleDragLeave(event, 'Big Goals')"
+      ondrop="handleDrop(event, 'Big Goals')"
+      id="col-big">
       <div class="flex flex-col gap-1.5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -258,39 +304,44 @@
             <h2 class="font-extrabold text-slate-800 text-base">Big Goals</h2>
           </div>
           <div class="flex items-center gap-1.5">
-            <span id="badge-big" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/80 text-purple-900 border border-white/80 shadow-sm">0</span>
-            <button onclick="openAddGoalModal('Big Goals')" title="Add Big Goal" class="w-6 h-6 rounded-lg bg-white/70 hover:bg-white text-purple-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
+            <span id="badge-big" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/90 text-rose-900 border border-white/80 shadow-xs">0</span>
+            <button onclick="openAddGoalModal('Big Goals')" title="Add Big Goal" class="w-6 h-6 rounded-lg bg-white/80 hover:bg-white text-rose-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
         </div>
-        <p class="text-[11px] font-bold text-purple-950/70">Core Focus • 1 to 3 Months</p>
+        <p class="text-[11px] font-bold text-rose-950/70">Core Focus • 1 to 3 Months</p>
       </div>
 
       <!-- Goal List Container -->
-      <div id="container-big" class="flex flex-col gap-3.5 min-h-[180px]"></div>
+      <div id="container-big" class="flex flex-col gap-3.5 flex-1"></div>
     </section>
 
-    <!-- COLUMN 3: Future Goals (#FFD6A5) -->
-    <section class="glass-panel glass-future p-5 shine-effect flex flex-col gap-4">
+    <!-- COLUMN 3: Future Goals (#7D99A4) -->
+    <section class="glass-panel glass-future p-5 shine-effect flex flex-col gap-4 min-h-[400px] transition-all"
+      ondragover="handleDragOver(event)"
+      ondragenter="handleDragEnter(event, 'Future Goals')"
+      ondragleave="handleDragLeave(event, 'Future Goals')"
+      ondrop="handleDrop(event, 'Future Goals')"
+      id="col-future">
       <div class="flex flex-col gap-1.5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-lg">✨</span>
-            <h2 class="font-extrabold text-slate-800 text-base">Future Goals</h2>
+            <h2 class="font-extrabold text-slate-900 text-base">Future Goals</h2>
           </div>
           <div class="flex items-center gap-1.5">
-            <span id="badge-future" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/80 text-amber-900 border border-white/80 shadow-sm">0</span>
-            <button onclick="openAddGoalModal('Future Goals')" title="Add Future Goal" class="w-6 h-6 rounded-lg bg-white/70 hover:bg-white text-amber-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
+            <span id="badge-future" class="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-slate-900/80 text-white border border-white/40 shadow-xs">0</span>
+            <button onclick="openAddGoalModal('Future Goals')" title="Add Future Goal" class="w-6 h-6 rounded-lg bg-white/80 hover:bg-white text-slate-800 text-xs font-extrabold flex items-center justify-center transition shadow-2xs">
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
         </div>
-        <p class="text-[11px] font-bold text-amber-950/70">Someday & Vision Board</p>
+        <p class="text-[11px] font-bold text-slate-900/80">Someday & Vision Board</p>
       </div>
 
       <!-- Goal List Container -->
-      <div id="container-future" class="flex flex-col gap-3.5 min-h-[180px]"></div>
+      <div id="container-future" class="flex flex-col gap-3.5 flex-1"></div>
     </section>
 
   </main>
@@ -335,7 +386,8 @@
             <label class="block text-xs font-bold text-slate-600 mb-1">Status</label>
             <select id="form-status" 
               class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 focus:border-purple-400 focus:bg-white text-slate-800 outline-none transition font-semibold">
-              <option value="Not Started">🔵 Not Started</option>
+              <option value="NOW">🔥 NOW</option>
+              <option value="Not Started">🪩 Not Started</option>
               <option value="In Progress">🟡 In Progress</option>
               <option value="Started">🌸 Started</option>
               <option value="Completed">❇️ Completed</option>
@@ -373,15 +425,19 @@
   </div>
 
   <script>
-    // Default Initial Seed Data
+    // Initial Seed Data with 🔥 NOW and 🪩 Not Started status options
     const DEFAULT_GOALS = [
       {
         id: 'g1',
-        title: 'Organize Workspace',
+        title: 'Organize Workspace Desk',
         category: 'Small Goals',
-        status: 'In Progress',
-        targetDate: 'By Tomorrow',
-        notes: ['Clear off desk surface', 'Sort stray papers', 'Wipe down keyboard']
+        status: 'NOW',
+        targetDate: 'By Today',
+        notes: [
+          { text: 'Clear off desk surface', done: true },
+          { text: 'Sort stray papers into tray', done: false },
+          { text: 'Wipe down keyboard & screen', done: false }
+        ]
       },
       {
         id: 'g2',
@@ -389,7 +445,10 @@
         category: 'Small Goals',
         status: 'Started',
         targetDate: 'Daily Habit',
-        notes: ['Fill water bottle in morning', 'Set gentle reminder phone timers']
+        notes: [
+          { text: 'Fill water bottle in morning', done: true },
+          { text: 'Set gentle phone timers', done: false }
+        ]
       },
       {
         id: 'g3',
@@ -397,7 +456,11 @@
         category: 'Big Goals',
         status: 'In Progress',
         targetDate: 'End of Month',
-        notes: ['Design homepage layout', 'Write project write-ups', 'Publish live link']
+        notes: [
+          { text: 'Design homepage layout', done: true },
+          { text: 'Write project write-ups', done: false },
+          { text: 'Publish live domain link', done: false }
+        ]
       },
       {
         id: 'g4',
@@ -405,7 +468,11 @@
         category: 'Big Goals',
         status: 'Not Started',
         targetDate: 'Q3 Goal',
-        notes: ['Atomic Habits', 'Stolen Focus', 'Hyperfocus']
+        notes: [
+          { text: 'Atomic Habits', done: false },
+          { text: 'Stolen Focus', done: false },
+          { text: 'Hyperfocus', done: false }
+        ]
       },
       {
         id: 'g5',
@@ -413,18 +480,29 @@
         category: 'Future Goals',
         status: 'Not Started',
         targetDate: 'Someday Vision',
-        notes: ['Save travel budget', 'Research Kyoto itineraries', 'Learn basic travel phrases']
+        notes: [
+          { text: 'Save travel budget', done: false },
+          { text: 'Research Kyoto itineraries', done: false },
+          { text: 'Learn basic Japanese phrases', done: false }
+        ]
       }
     ];
 
     let goalsData = [];
+    let draggedGoalId = null;
 
-    // Load Data from LocalStorage
+    // Load Data from LocalStorage with structure normalization
     function loadData() {
-      const saved = localStorage.getItem('notion_goals_widget_v1');
+      const saved = localStorage.getItem('notion_goals_widget_v2');
       if (saved) {
         try {
           goalsData = JSON.parse(saved);
+          // Normalize sub-notes to objects if stored as raw strings in legacy versions
+          goalsData.forEach(g => {
+            if (g.notes && g.notes.length > 0 && typeof g.notes[0] === 'string') {
+              g.notes = g.notes.map(str => ({ text: str, done: false }));
+            }
+          });
         } catch (e) {
           goalsData = JSON.parse(JSON.stringify(DEFAULT_GOALS));
         }
@@ -433,9 +511,9 @@
       }
     }
 
-    // Save Data to LocalStorage & Render
+    // Save Data to LocalStorage & Render UI
     function saveData() {
-      localStorage.setItem('notion_goals_widget_v1', JSON.stringify(goalsData));
+      localStorage.setItem('notion_goals_widget_v2', JSON.stringify(goalsData));
       renderAll();
     }
 
@@ -445,7 +523,7 @@
       saveData();
     }
 
-    // Trigger Dopamine Micro-reward Confetti Blast
+    // Trigger Dopamine Micro-reward Confetti Burst
     function triggerDopamineConfetti(e) {
       let x = 0.5;
       let y = 0.5;
@@ -457,11 +535,71 @@
 
       confetti({
         particleCount: 65,
-        spread: 70,
+        spread: 75,
         origin: { x: x, y: y },
-        colors: ['#D8F3DC', '#E2D4F9', '#FFD6A5', '#FCE7F3', '#FEF3C7', '#D1FAE5'],
+        colors: ['#EF4444', '#D8F3DC', '#FAD1D9', '#7D99A4', '#FEF3C7', '#D1FAE5'],
         disableForReducedMotion: true
       });
+    }
+
+    // Drag and Drop Handlers
+    function handleDragStart(e, goalId) {
+      draggedGoalId = goalId;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', goalId);
+      
+      const target = e.currentTarget;
+      setTimeout(() => target.classList.add('dragging'), 0);
+    }
+
+    function handleDragEnd(e) {
+      e.currentTarget.classList.remove('dragging');
+      draggedGoalId = null;
+      document.querySelectorAll('section.glass-panel').forEach(col => {
+        col.classList.remove('drag-over-container');
+      });
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDragEnter(e, category) {
+      e.preventDefault();
+      const colId = getColIdByCategory(category);
+      const colEl = document.getElementById(colId);
+      if (colEl) colEl.classList.add('drag-over-container');
+    }
+
+    function handleDragLeave(e, category) {
+      const colId = getColIdByCategory(category);
+      const colEl = document.getElementById(colId);
+      if (colEl && !colEl.contains(e.relatedTarget)) {
+        colEl.classList.remove('drag-over-container');
+      }
+    }
+
+    function handleDrop(e, category) {
+      e.preventDefault();
+      const colId = getColIdByCategory(category);
+      const colEl = document.getElementById(colId);
+      if (colEl) colEl.classList.remove('drag-over-container');
+
+      if (!draggedGoalId) return;
+
+      const goal = goalsData.find(g => g.id === draggedGoalId);
+      if (goal && goal.category !== category) {
+        goal.category = category;
+        saveData();
+      }
+    }
+
+    function getColIdByCategory(category) {
+      if (category === 'Small Goals') return 'col-small';
+      if (category === 'Big Goals') return 'col-big';
+      if (category === 'Future Goals') return 'col-future';
+      return '';
     }
 
     // Change Goal Status
@@ -473,14 +611,30 @@
       const oldStatus = goal.status;
       goal.status = newStatus;
 
-      if ((newStatus === 'Started' || newStatus === 'Completed') && oldStatus !== newStatus) {
+      // Trigger micro-dopamine confetti burst on high focus / progress transitions
+      if ((newStatus === 'NOW' || newStatus === 'Started' || newStatus === 'Completed') && oldStatus !== newStatus) {
         triggerDopamineConfetti(event);
       }
 
       saveData();
     }
 
-    // Change Goal Category (Move Column)
+    // Toggle Sub-step Checkbox
+    function toggleSubstep(goalId, index, event) {
+      if (event) event.stopPropagation();
+      const goal = goalsData.find(g => g.id === goalId);
+      if (!goal || !goal.notes || !goal.notes[index]) return;
+
+      goal.notes[index].done = !goal.notes[index].done;
+
+      if (goal.notes[index].done) {
+        triggerDopamineConfetti(event);
+      }
+
+      saveData();
+    }
+
+    // Change Goal Category via Dropdown
     function moveGoalCategory(goalId, newCategory, event) {
       if (event) event.stopPropagation();
       const goal = goalsData.find(g => g.id === goalId);
@@ -519,9 +673,11 @@
       document.getElementById('form-goal-id').value = goal.id;
       document.getElementById('form-title').value = goal.title;
       document.getElementById('form-category').value = goal.category;
-      document.getElementById('form-status').value = goal.status;
+      document.getElementById('form-status').value = goal.status || 'Not Started';
       document.getElementById('form-target-date').value = goal.targetDate || '';
-      document.getElementById('form-notes').value = (goal.notes || []).join('\n');
+      
+      const notesString = (goal.notes || []).map(n => typeof n === 'string' ? n : n.text).join('\n');
+      document.getElementById('form-notes').value = notesString;
 
       document.getElementById('goal-modal').classList.remove('hidden');
     }
@@ -540,17 +696,32 @@
       const status = document.getElementById('form-status').value;
       const targetDate = document.getElementById('form-target-date').value.trim();
       const notesRaw = document.getElementById('form-notes').value;
-      const notes = notesRaw.split('\n').map(n => n.trim()).filter(n => n.length > 0);
+      
+      const notes = notesRaw
+        .split('\n')
+        .map(n => n.trim())
+        .filter(n => n.length > 0)
+        .map(text => ({ text, done: false }));
 
       if (id) {
-        // Edit Existing
+        // Edit Existing Goal
         const goal = goalsData.find(g => g.id === id);
         if (goal) {
+          // preserve checked state for existing notes if text matches
+          const existingNotes = goal.notes || [];
+          const updatedNotes = notes.map(newNote => {
+            const oldNote = existingNotes.find(o => (typeof o === 'string' ? o : o.text) === newNote.text);
+            return {
+              text: newNote.text,
+              done: oldNote ? (typeof oldNote === 'string' ? false : oldNote.done) : false
+            };
+          });
+
           goal.title = title;
           goal.category = category;
           goal.status = status;
           goal.targetDate = targetDate;
-          goal.notes = notes;
+          goal.notes = updatedNotes;
         }
       } else {
         // Add New Goal
@@ -563,7 +734,7 @@
           notes
         };
         goalsData.push(newGoal);
-        if (status === 'Started' || status === 'Completed') {
+        if (status === 'NOW' || status === 'Started' || status === 'Completed') {
           triggerDopamineConfetti(e);
         }
       }
@@ -584,7 +755,7 @@
 
       if (list.length === 0) {
         container.innerHTML = `
-          <div class="flex flex-col items-center justify-center py-10 text-center text-slate-400/80 border border-dashed border-slate-300/60 rounded-2xl bg-white/30">
+          <div class="flex flex-col items-center justify-center py-12 text-center text-slate-500/80 border border-dashed border-slate-300/60 rounded-2xl bg-white/30 h-full min-h-[160px]">
             <i class="fa-solid fa-seedling text-2xl mb-1.5 opacity-40"></i>
             <span class="text-xs font-semibold">No goals here yet</span>
             <button onclick="openAddGoalModal('${category}')" class="mt-2 text-[11px] text-purple-700 font-extrabold underline hover:text-purple-900">Add One</button>
@@ -596,31 +767,53 @@
       list.forEach(goal => {
         const card = document.createElement('div');
         card.className = 'goal-card p-3.5 rounded-2xl flex flex-col gap-2.5 group relative';
+        card.setAttribute('draggable', 'true');
+        card.setAttribute('ondragstart', `handleDragStart(event, '${goal.id}')`);
+        card.setAttribute('ondragend', `handleDragEnd(event)`);
 
         // Get Badge Style Class
         let badgeClass = 'badge-not-started';
-        let badgeIcon = 'fa-circle-dot';
-        if (goal.status === 'In Progress') {
+        if (goal.status === 'NOW') {
+          badgeClass = 'badge-now';
+        } else if (goal.status === 'In Progress') {
           badgeClass = 'badge-in-progress';
-          badgeIcon = 'fa-spinner';
         } else if (goal.status === 'Started') {
           badgeClass = 'badge-started';
-          badgeIcon = 'fa-heart';
         } else if (goal.status === 'Completed') {
           badgeClass = 'badge-completed';
-          badgeIcon = 'fa-circle-check';
         }
 
-        // Render Micro-notes sub-items
+        // Render Micro-notes / Sub-steps with interactive checkboxes
         let subNotesHtml = '';
         if (goal.notes && goal.notes.length > 0) {
-          const notesList = goal.notes.map(note => `
-            <li class="flex items-center gap-1.5 text-[10px] text-slate-600 font-medium">
-              <span class="w-1 h-1 rounded-full bg-slate-400"></span>
-              <span class="truncate">${escapeHtml(note)}</span>
-            </li>
-          `).join('');
-          subNotesHtml = `<ul class="mt-1 flex flex-col gap-0.5 bg-slate-50/70 p-2 rounded-xl border border-slate-200/50">${notesList}</ul>`;
+          const notesList = goal.notes.map((noteObj, idx) => {
+            const text = typeof noteObj === 'string' ? noteObj : noteObj.text;
+            const isDone = typeof noteObj === 'object' && noteObj.done;
+            return `
+              <li class="flex items-center gap-2 text-[11px] text-slate-700 font-medium">
+                <input type="checkbox" ${isDone ? 'checked' : ''} 
+                  onclick="toggleSubstep('${goal.id}', ${idx}, event)"
+                  class="w-3.5 h-3.5 rounded text-purple-600 focus:ring-0 cursor-pointer accent-purple-600">
+                <span class="truncate ${isDone ? 'line-through text-slate-400' : ''}">${escapeHtml(text)}</span>
+              </li>
+            `;
+          }).join('');
+
+          const completedCount = goal.notes.filter(n => typeof n === 'object' && n.done).length;
+          const progressPct = Math.round((completedCount / goal.notes.length) * 100);
+
+          subNotesHtml = `
+            <div class="mt-1 bg-slate-50/80 p-2 rounded-xl border border-slate-200/60 flex flex-col gap-1.5">
+              <div class="flex items-center justify-between text-[9px] font-bold text-slate-500">
+                <span>Micro-steps</span>
+                <span>${completedCount}/${goal.notes.length} (${progressPct}%)</span>
+              </div>
+              <div class="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: ${progressPct}%"></div>
+              </div>
+              <ul class="flex flex-col gap-1 mt-0.5">${notesList}</ul>
+            </div>
+          `;
         }
 
         card.innerHTML = `
@@ -628,7 +821,7 @@
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0 cursor-pointer flex-1" onclick="openEditGoalModal('${goal.id}')">
               <h3 class="text-xs font-extrabold text-slate-800 leading-snug hover:text-purple-600 transition ${goal.status === 'Completed' ? 'line-through text-slate-400' : ''}">
-                ${escapeHtml(goal.title)}
+                ${goal.status === 'NOW' ? '<span class="inline-block animate-bounce mr-1">🔥</span>' : ''} ${escapeHtml(goal.title)}
               </h3>
               ${goal.targetDate ? `<p class="text-[10px] font-bold text-slate-400 mt-0.5 flex items-center gap-1"><i class="fa-regular fa-clock text-[9px]"></i> ${escapeHtml(goal.targetDate)}</p>` : ''}
             </div>
@@ -648,11 +841,12 @@
           ${subNotesHtml}
 
           <!-- Footer: Quick Status Pill & Quick Move Dropdown -->
-          <div class="flex items-center justify-between gap-1 pt-1 border-t border-slate-100">
+          <div class="flex items-center justify-between gap-1 pt-1.5 border-t border-slate-100 mt-0.5">
             <!-- Quick Status Selector -->
             <select onchange="updateGoalStatus('${goal.id}', this.value, event)" 
               class="text-[10px] font-extrabold px-2 py-0.5 rounded-lg cursor-pointer outline-none transition ${badgeClass}">
-              <option value="Not Started" ${goal.status === 'Not Started' ? 'selected' : ''}>🔵 Not Started</option>
+              <option value="NOW" ${(goal.status === 'NOW') ? 'selected' : ''}>🔥 NOW</option>
+              <option value="Not Started" ${(goal.status === 'Not Started' || !goal.status) ? 'selected' : ''}>🪩 Not Started</option>
               <option value="In Progress" ${goal.status === 'In Progress' ? 'selected' : ''}>🟡 In Progress</option>
               <option value="Started" ${goal.status === 'Started' ? 'selected' : ''}>🌸 Started</option>
               <option value="Completed" ${goal.status === 'Completed' ? 'selected' : ''}>❇️ Completed</option>
@@ -660,7 +854,7 @@
 
             <!-- Quick Column Move Dropdown -->
             <select onchange="moveGoalCategory('${goal.id}', this.value, event)" title="Move goal to another category" 
-              class="text-[9px] font-bold text-slate-400 bg-white/60 hover:bg-white border border-slate-200/60 rounded-md px-1.5 py-0.5 outline-none transition">
+              class="text-[9px] font-bold text-slate-500 bg-white/70 hover:bg-white border border-slate-200 rounded-md px-1.5 py-0.5 outline-none transition">
               <option value="Small Goals" ${goal.category === 'Small Goals' ? 'selected' : ''}>🌱 Small</option>
               <option value="Big Goals" ${goal.category === 'Big Goals' ? 'selected' : ''}>⚡ Big</option>
               <option value="Future Goals" ${goal.category === 'Future Goals' ? 'selected' : ''}>✨ Future</option>
@@ -672,7 +866,7 @@
       });
     }
 
-    // Render All Columns & Dashboard Summary Stats
+    // Render All Columns & Summary Metrics
     function renderAll() {
       renderColumn('Small Goals', 'container-small', 'badge-small');
       renderColumn('Big Goals', 'container-big', 'badge-big');
@@ -680,8 +874,11 @@
 
       // Overall Summary
       const totalGoals = goalsData.length;
+      const nowGoals = goalsData.filter(g => g.status === 'NOW').length;
       const completedGoals = goalsData.filter(g => g.status === 'Completed').length;
-      document.getElementById('overall-goal-stats').innerText = `${completedGoals}/${totalGoals} Goals Done`;
+
+      document.getElementById('now-goal-stats').innerText = `${nowGoals} NOW Focus`;
+      document.getElementById('overall-goal-stats').innerText = `${completedGoals}/${totalGoals} Done`;
     }
 
     // Utility: HTML Escaping
